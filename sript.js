@@ -36,30 +36,29 @@ function loadUnits() {
     const selectedCategory = category.value;
 
     if (selectedCategory === "Temperature") {
-        const tempUnits = ["Celsius", "Fahrenheit", "Kelvin"];
-
-        tempUnits.forEach(unit => {
-            fromUnit.innerHTML += `<option>${unit}</option>`;
-            toUnit.innerHTML += `<option>${unit}</option>`;
+        ["Celsius", "Fahrenheit", "Kelvin"].forEach(unit => {
+            fromUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+            toUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
         });
-
-        return;
+    } else {
+        for (let unit in units[selectedCategory]) {
+            fromUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+            toUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+        }
     }
 
-    for (let unit in units[selectedCategory]) {
-        fromUnit.innerHTML += `<option>${unit}</option>`;
-        toUnit.innerHTML += `<option>${unit}</option>`;
-    }
+    convert(); // 🔥 IMPORTANT: auto update after loading
 }
 
 function convert() {
-    const value = Number(inputValue.value);
+    const value = inputValue.value;
 
-    if (inputValue.value === "") {
+    if (value === "") {
         resultText.textContent = "Enter value";
         return;
     }
 
+    const num = Number(value);
     const categoryType = category.value;
     const from = fromUnit.value;
     const to = toUnit.value;
@@ -68,34 +67,38 @@ function convert() {
 
     if (categoryType === "Temperature") {
 
-        if (from === to) result = value;
-        else if (from === "Celsius" && to === "Fahrenheit") result = (value * 9 / 5) + 32;
-        else if (from === "Celsius" && to === "Kelvin") result = value + 273.15;
-        else if (from === "Fahrenheit" && to === "Celsius") result = (value - 32) * 5 / 9;
-        else if (from === "Fahrenheit" && to === "Kelvin") result = ((value - 32) * 5 / 9) + 273.15;
-        else if (from === "Kelvin" && to === "Celsius") result = value - 273.15;
-        else if (from === "Kelvin" && to === "Fahrenheit") result = ((value - 273.15) * 9 / 5) + 32;
+        if (from === to) result = num;
+
+        else if (from === "Celsius" && to === "Fahrenheit")
+            result = (num * 9 / 5) + 32;
+
+        else if (from === "Celsius" && to === "Kelvin")
+            result = num + 273.15;
+
+        else if (from === "Fahrenheit" && to === "Celsius")
+            result = (num - 32) * 5 / 9;
+
+        else if (from === "Fahrenheit" && to === "Kelvin")
+            result = ((num - 32) * 5 / 9) + 273.15;
+
+        else if (from === "Kelvin" && to === "Celsius")
+            result = num - 273.15;
+
+        else if (from === "Kelvin" && to === "Fahrenheit")
+            result = ((num - 273.15) * 9 / 5) + 32;
 
     } else {
-        result = value * units[categoryType][from] / units[categoryType][to];
+        result = num * units[categoryType][from] / units[categoryType][to];
     }
 
     resultText.textContent = isNaN(result) ? "Invalid input" : result.toFixed(2);
 }
 
-/* 🔥 AUTO EVENT SYSTEM */
-function autoConvert() {
-    convert();
-}
+/* 🔥 AUTO EVENTS */
+inputValue.addEventListener("input", convert);
+fromUnit.addEventListener("change", convert);
+toUnit.addEventListener("change", convert);
+category.addEventListener("change", loadUnits);
 
-/* Events */
-inputValue.addEventListener("input", autoConvert);
-fromUnit.addEventListener("change", autoConvert);
-toUnit.addEventListener("change", autoConvert);
-category.addEventListener("change", () => {
-    loadUnits();
-    autoConvert();
-});
-
-/* Init */
+/* INIT */
 loadUnits();
