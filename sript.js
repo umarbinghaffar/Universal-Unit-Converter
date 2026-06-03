@@ -28,7 +28,6 @@ const fromUnit = document.getElementById("fromUnit");
 const toUnit = document.getElementById("toUnit");
 const inputValue = document.getElementById("inputValue");
 const resultText = document.getElementById("resultText");
-const convertBtn = document.getElementById("convertBtn");
 
 function loadUnits() {
     fromUnit.innerHTML = "";
@@ -56,8 +55,8 @@ function loadUnits() {
 function convert() {
     const value = Number(inputValue.value);
 
-    if (!value && value !== 0) {
-        resultText.textContent = "Enter a value";
+    if (inputValue.value === "") {
+        resultText.textContent = "Enter value";
         return;
     }
 
@@ -69,40 +68,34 @@ function convert() {
 
     if (categoryType === "Temperature") {
 
-        if (from === to) {
-            result = value;
-        }
-        else if (from === "Celsius" && to === "Fahrenheit") {
-            result = (value * 9 / 5) + 32;
-        }
-        else if (from === "Celsius" && to === "Kelvin") {
-            result = value + 273.15;
-        }
-        else if (from === "Fahrenheit" && to === "Celsius") {
-            result = (value - 32) * 5 / 9;
-        }
-        else if (from === "Fahrenheit" && to === "Kelvin") {
-            result = ((value - 32) * 5 / 9) + 273.15;
-        }
-        else if (from === "Kelvin" && to === "Celsius") {
-            result = value - 273.15;
-        }
-        else if (from === "Kelvin" && to === "Fahrenheit") {
-            result = ((value - 273.15) * 9 / 5) + 32;
-        }
+        if (from === to) result = value;
+        else if (from === "Celsius" && to === "Fahrenheit") result = (value * 9 / 5) + 32;
+        else if (from === "Celsius" && to === "Kelvin") result = value + 273.15;
+        else if (from === "Fahrenheit" && to === "Celsius") result = (value - 32) * 5 / 9;
+        else if (from === "Fahrenheit" && to === "Kelvin") result = ((value - 32) * 5 / 9) + 273.15;
+        else if (from === "Kelvin" && to === "Celsius") result = value - 273.15;
+        else if (from === "Kelvin" && to === "Fahrenheit") result = ((value - 273.15) * 9 / 5) + 32;
 
     } else {
-
-        result =
-            value *
-            units[categoryType][from] /
-            units[categoryType][to];
+        result = value * units[categoryType][from] / units[categoryType][to];
     }
 
-    resultText.textContent = result.toFixed(2);
+    resultText.textContent = isNaN(result) ? "Invalid input" : result.toFixed(2);
 }
 
-loadUnits();
+/* 🔥 AUTO EVENT SYSTEM */
+function autoConvert() {
+    convert();
+}
 
-category.addEventListener("change", loadUnits);
-convertBtn.addEventListener("click", convert);
+/* Events */
+inputValue.addEventListener("input", autoConvert);
+fromUnit.addEventListener("change", autoConvert);
+toUnit.addEventListener("change", autoConvert);
+category.addEventListener("change", () => {
+    loadUnits();
+    autoConvert();
+});
+
+/* Init */
+loadUnits();
