@@ -47,7 +47,7 @@ function loadUnits() {
         }
     }
 
-    convert(); // 🔥 IMPORTANT: auto update after loading
+    convert(); 
 }
 
 function convert() {
@@ -94,11 +94,9 @@ function convert() {
     resultText.textContent = isNaN(result) ? "Invalid input" : result.toFixed(2);
 }
 
-/* 🔥 AUTO EVENTS */
 inputValue.addEventListener("input", convert);
 fromUnit.addEventListener("change", convert);
 toUnit.addEventListener("change", convert);
 category.addEventListener("change", loadUnits);
 
-/* INIT */
 loadUnits();
