@@ -54,7 +54,7 @@ function convert() {
     const value = inputValue.value;
 
     if (value === "") {
-        resultText.textContent = "Enter value";
+        resultText.textContent = "value";
         return;
     }
 
